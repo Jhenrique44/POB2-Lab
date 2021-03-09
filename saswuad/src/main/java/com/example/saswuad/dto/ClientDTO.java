@@ -1,18 +1,23 @@
 package com.example.saswuad.dto;
 
-public class ClienteDTO {
+import com.example.saswuad.entities.Client;
+
+public class ClientDTO {
     
     private Long id;
     private String name;
 
     
-	public ClienteDTO() {
+	public ClientDTO() {
 
 	}
-    public ClienteDTO(Long id, String name) {
+    public ClientDTO(Long id, String name) {
         
 	}
-
+	public ClientDTO(Client client) {
+        setId(client.getId());
+        setName(client.getName());
+	}
 	public Long getId() {
 		return id;
 	}

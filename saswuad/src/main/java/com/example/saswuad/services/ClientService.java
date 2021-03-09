@@ -1,0 +1,73 @@
+package com.example.saswuad.services;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
+
+import com.example.saswuad.dto.ClientDTO;
+import com.example.saswuad.dto.ClientInsertDTO;
+import com.example.saswuad.dto.ClientUpdateDTO;
+import com.example.saswuad.entities.Client;
+import com.example.saswuad.repository.ClientRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+@Service
+public class ClientService {
+    
+    @Autowired
+    private ClientRepository repo;
+
+    public List<ClientDTO> getClients() {
+        List<Client> list = repo.findAll();
+        return toDTOList(list);
+    }
+
+    public ClientDTO getClientById(Long id) {
+        Optional<Client> op = repo.findById(id);
+        Client client = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Client not found"));
+        return new ClientDTO(client);
+    }
+
+    public ClientDTO insert(ClientInsertDTO insertDTO) {
+        Client entity = new Client(insertDTO);
+        entity = repo.save(entity);
+        return new ClientDTO(entity);
+    }
+
+    public void delete(Long id) {
+        try {
+            repo.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client not found");
+        }
+    }
+
+    public ClientDTO update(Long id, ClientUpdateDTO updateDTO) {
+        try {
+            Client entity = repo.getOne(id);
+            entity.setName(updateDTO.getName());
+            entity = repo.save(entity);
+
+            return new ClientDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client not found");
+        }
+    }
+
+    private List<ClientDTO> toDTOList(List<Client> list) {
+        List<ClientDTO> listDTO = new ArrayList<>();
+
+        for (Client c : list) {
+            listDTO.add(new ClientDTO(c.getId(), c.getName()));
+        }
+        return listDTO;
+    }
+
+}
