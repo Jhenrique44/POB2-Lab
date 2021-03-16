@@ -12,7 +12,8 @@ public class ClientDTO {
 
 	}
     public ClientDTO(Long id, String name) {
-        
+        setId(id);
+		setName(name);
 	}
 	public ClientDTO(Client client) {
         setId(client.getId());
