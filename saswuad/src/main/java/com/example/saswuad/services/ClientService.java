@@ -14,6 +14,8 @@ import com.example.saswuad.repository.ClientRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,9 +26,11 @@ public class ClientService {
     @Autowired
     private ClientRepository repo;
 
-    public List<ClientDTO> getClients() {
-        List<Client> list = repo.findAll();
-        return toDTOList(list);
+    public Page<ClientDTO> getClients(PageRequest pageRequest){
+
+        Page<Client> list = repo.find(pageRequest);
+        
+        return list.map(c-> new ClientDTO(c));
     }
 
     public ClientDTO getClientById(Long id) {
