@@ -14,8 +14,12 @@ public interface ClientRepository extends JpaRepository <Client,Long> {
     
 
     //Uma consulta JPQL (sintaxe diferente de SQL)!!!
-    @Query("SELECT c FROM Client c") //SELECT da entidade Client e não da tabela
-    public Page<Client> find(Pageable pageRequest);
+    @Query("SELECT c FROM Client c" + 
+            "WHERE" + 
+            "LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')) AND " +
+            "LOWER(c.address) LIKE LOWER(CONCAT('%', :address, '%')) "
+    ) //SELECT da entidade Client e não da tabela
+    public Page<Client> find(Pageable pageRequest, String name, String address);
 
 
 }
